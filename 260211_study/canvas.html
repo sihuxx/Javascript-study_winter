@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>캔버스 공부</title>
+</head>
+
+<body>
+  <div class="btns" style="margin-bottom: 20px;">
+    <label>색상: <input type="color" id="color"></label>
+    <label>굵기: <input type="range" id="range" value='2.5'  min="2.5" max="20"></label>
+    <button id="eraser">지우개</button>
+    <button id="clear">전체 삭제</button>
+    <button id="save">저장</button>
+  </div>
+  <canvas id="canvas" width="800px" height="600px" style="border: 1px solid;"></canvas>
+</body>
+<script>
+  const canvas = document.getElementById("canvas")
+  const ctx = canvas.getContext("2d")
+
+  ctx.lineWidth = 2.5
+  ctx.linecap = 'round'
+  ctx.strokeStyle = 'black'
+
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  let painting = false
+
+  function startPainting() {
+    painting = true
+    ctx.beginPath()
+  }
+  function stopPainting() {
+    painting = false;
+  }
+  function movePainting(event) {
+    const x = event.offsetX
+    const y = event.offsetY
+
+    if (!painting) {
+      ctx.moveTo(x, y)
+    } else {
+      ctx.lineTo(x, y)
+      ctx.stroke()
+    }
+  }
+  canvas.addEventListener("mousemove", movePainting)
+  canvas.addEventListener("mousedown", startPainting)
+  canvas.addEventListener("mouseup", stopPainting)
+  canvas.addEventListener("mouseleave", stopPainting)
+
+  const clear = document.getElementById("clear")
+  const eraser = document.getElementById("eraser")
+  const colors = document.getElementById("color")
+  const range = document.getElementById("range")
+  const save = document.getElementById("save")
+
+  colors.addEventListener("change", (event) => {
+    ctx.strokeStyle = event.target.value
+  })
+  range.addEventListener("input", (event) => {
+    ctx.lineWidth = event.target.value
+  })
+  eraser.addEventListener("click", () => {
+    ctx.strokeStyle = "white"
+  })
+  clear.addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+  })
+  save.addEventListener('click', () => {
+    const link = document.createElement("a")
+    link.href = canvas.toDataURL("image/png")
+    link.download = "image.png" 
+    link.click()
+  })
+</script>
+
+</html>
